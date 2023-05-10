@@ -17,14 +17,14 @@ export const useTopMenuStore = defineStore("topMenu", {
   state: (): TopMenuState => ({
     menu: [
       {
-        icon: "Activity",
-        pageName: "top-menu-page-1",
-        title: "Page 1",
+        icon: "Home",
+        pageName: "Dashboard",
+        title: "Dashboard",
       },
       {
-        icon: "Activity",
-        pageName: "top-menu-page-2",
-        title: "Page 2",
+        icon: "Users",
+        pageName: "EmployeeIndex",
+        title: "Employee",
       },
     ],
   }),

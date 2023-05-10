@@ -1,14 +1,15 @@
 import { createRouter, createWebHistory } from "vue-router";
 
+//Global
 import Dashboard from "../pages/Dashboard.vue";
-import Register from "../pages/Register.vue";
-import SideMenu from "../layouts/SideMenu/SideMenu.vue";
 import TopMenu from "../layouts/TopMenu/TopMenu.vue";
+//Status Code
 import Error404 from "../pages/Error404.vue";
 import Error403 from "../pages/Error403.vue";
+
+import Register from "../pages/Register.vue";
 import AdminLogin from "../pages/Login/AdminLogin.vue";
-
-
+import EmployeeIndex from "../pages/Employee/EmployeeIndex.vue";
 const routes = [
   {
     path: "/forbidden",
@@ -22,7 +23,7 @@ const routes = [
   },
   {
     path: "/login",
-    name: "Login",
+    name: "AdminLogin",
     component: AdminLogin,
   },
   {
@@ -31,25 +32,30 @@ const routes = [
     component: Register,
   },
   {
-    path: "/dashboard",
+    path: "/",
     component: TopMenu,
     children: [
       {
         path: "/",
         name: "Dashboard",
         component: Dashboard,
-        meta:{
-          breadcrumb:[
+        meta: {
+          breadcrumb: [
             {
-              display_name: 'Dashboard',
-              route_name: 'Dashboard',
-              active: true
-            }
-          ]
-        }
+              display_name: "Dashboard",
+              route_name: "Dashboard",
+              active: true,
+            },
+          ],
+        },
+      },
+      {
+        path: "/employee",
+        name: "EmployeeIndex",
+        component: EmployeeIndex,
       },
     ],
-  }
+  },
 ];
 
 const router = createRouter({
@@ -59,6 +65,5 @@ const router = createRouter({
     return savedPosition || { left: 0, top: 0 };
   },
 });
-
 
 export default router;

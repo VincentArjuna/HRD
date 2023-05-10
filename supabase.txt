@@ -1,1 +1,0 @@
-access token = sbp_79fd0dfc36bcf69460c7aa64ac9cfebd6fb6cbe1

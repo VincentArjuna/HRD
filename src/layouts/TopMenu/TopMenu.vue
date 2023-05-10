@@ -16,6 +16,7 @@ import { Menu, Popover } from "../../base-components/Headless";
 import { TransitionRoot } from "@headlessui/vue";
 import { watch, reactive, computed, onMounted, ref } from "vue";
 import router from "../../router";
+import { API } from "../../api/api";
 
 const searchDropdown = ref(false);
 const showSearchDropdown = () => {
@@ -40,8 +41,12 @@ onMounted(() => {
   setFormattedMenu(topMenu.value);
 });
 
-const logout = () => {
-
+const logoutUser = async () => {
+  const email = localStorage.getItem('email');
+  if (email) {
+    const logout = await API.adminLogout(email);
+  }
+  router.push({ name: "AdminLogin" });
 }
 </script>
 
@@ -51,7 +56,7 @@ const logout = () => {
     <MainColorSwitcher />
     <MobileMenu />
     <!-- BEGIN: Top Bar -->
-    <div class="border-b border-white/[0.08] mt-[2.2rem] md:-mt-5 -mx-3 sm:-mx-8 px-3 sm:px-8 pt-3 md:pt-0 mb-10">
+    <div class="border-b border-white/[0.08] mt-[2.2rem] md:-mt-5 -mx-3 sm:-mx-8 px-3 sm:px-8 pt-3 md:pt-0 mb-5">
       <div class="flex items-center h-[70px] z-[51] relative">
         <!-- BEGIN: Logo -->
         <RouterLink :to="{ name: 'Dashboard' }" class="hidden -intro-x md:flex">
@@ -197,7 +202,7 @@ const logout = () => {
               <Lucide icon="HelpCircle" class="w-4 h-4 mr-2" /> Help
             </Menu.Item>
             <Menu.Divider class="bg-white/[0.08]" />
-            <Menu.Item @click="logout" class="hover:bg-white/5">
+            <Menu.Item @click="logoutUser" class="hover:bg-white/5">
               <Lucide icon="ToggleRight" class="w-4 h-4 mr-2" /> Logout
             </Menu.Item>
           </Menu.Items>

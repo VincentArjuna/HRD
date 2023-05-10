@@ -7,6 +7,7 @@ import { useRouter } from "vue-router";
 import Alert from "../../base-components/Alert";
 import Lucide from "../../base-components/Lucide";
 import { ref } from "vue";
+import { API } from "../../api/api";
 
 
 interface LoginUser {
@@ -25,9 +26,17 @@ const errorMsg = ref('');
  * Login User
  */
 const loginUser = async () => {
-  try {
-
-  } catch (error) {
+  const login = await API.adminLogin(user.email, user.password);
+  console.log(login);
+  if (login) {
+    if (login.status == 200) {
+      localStorage.setItem('email', user.email);
+      router.push({ name: "Dashboard" });
+    } else {
+      errorMsg.value = login.message;
+    }
+  } else {
+    errorMsg.value = "Something went wrong!";
   }
 };
 
