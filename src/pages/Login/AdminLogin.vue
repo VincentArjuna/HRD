@@ -27,10 +27,8 @@ const errorMsg = ref('');
  */
 const loginUser = async () => {
   const login = await API.adminLogin(user.email, user.password);
-  console.log(login);
   if (login) {
     if (login.status == 200) {
-      localStorage.setItem('email', user.email);
       router.push({ name: "Dashboard" });
     } else {
       errorMsg.value = login.message;

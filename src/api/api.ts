@@ -1,4 +1,5 @@
 import axios, { AxiosError } from "axios";
+import { useUserStore } from "../stores/user";
 
 const apiURL = import.meta.env.VITE_API_URL;
 export class API {
@@ -9,6 +10,7 @@ export class API {
    * @param password
    */
   static async adminLogin(email: string, password: string): Promise<any> {
+    localStorage.clear();
     return axios
       .post(
         apiURL + "/custom_auth/login/",
@@ -25,7 +27,8 @@ export class API {
         }
       )
       .then((response) => {
-        
+        const userState = useUserStore();
+        userState.setUserStateLogin(response.data);
         return {
           status: response.status,
           response: response.data,

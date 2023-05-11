@@ -45,6 +45,9 @@ const logoutUser = async () => {
   const email = localStorage.getItem('email');
   if (email) {
     const logout = await API.adminLogout(email);
+    if (logout) {
+      localStorage.clear();
+    }
   }
   router.push({ name: "AdminLogin" });
 }
