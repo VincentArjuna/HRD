@@ -8,6 +8,8 @@ import { onMounted, ref, reactive } from "vue";
 import { createIcons, icons } from "lucide";
 import { TabulatorFull as Tabulator } from "tabulator-tables";
 import { stringToHTML } from "../../utils/helper";
+import { API } from "../../api/api";
+import { Combobox } from "@headlessui/vue";
 
 interface Response {
     name?: string;
@@ -19,7 +21,7 @@ interface Response {
 const tableRef = ref<HTMLDivElement>();
 const tabulator = ref<Tabulator>();
 const filter = reactive({
-    field: "name",
+    field: "profile.name",
     type: "like",
     value: "",
 });
@@ -46,7 +48,6 @@ const reInitOnResizeWindow = () => {
 
 // Filter function
 const onFilter = () => {
-
     if (tabulator.value) {
         tabulator.value.setFilter(filter.field, filter.type, filter.value);
     }
@@ -93,11 +94,12 @@ const onExportHtml = () => {
     }
 };
 
+const apiUrl = import.meta.env.VITE_API_URL;
 const initTabulator = () => {
     if (tableRef.value) {
         tabulator.value = new Tabulator(tableRef.value, {
-            ajaxURL: "https://dummy-data.left4code.com",
-            
+            ajaxURL: apiUrl + "/tenant/get-employee-data",
+
             paginationMode: "remote",
             filterMode: "remote",
             sortMode: "remote",
@@ -108,7 +110,7 @@ const initTabulator = () => {
             paginationSizeSelector: [10, 20, 30, 40],
             layout: "fitColumns",
             responsiveLayout: "collapse",
-            placeholder: "No matching records found",       
+            placeholder: "No matching records found",
             columns: [
                 {
                     title: "",
@@ -119,19 +121,42 @@ const initTabulator = () => {
                     resizable: false,
                     headerSort: false,
                 },
-
+                
                 // For HTML table
                 {
-                    title: "REMAINING STOCK",
+                    title: "Employee ID",
+                    field: "employee_id",
                     minWidth: 200,
-                    field: "remaining_stock",
-                    hozAlign: "center",
-                    headerHozAlign: "center",
+                    responsive: 0,
+                    frozen: true,
                     vertAlign: "middle",
                     print: false,
                     download: false,
+                    hozAlign: "center",
+                    headerHozAlign: "center"
                 },
-
+                {
+                    title: "Branch ID",
+                    field: "branch_id",
+                    minWidth: 200,
+                    responsive: 0,
+                    vertAlign: "middle",
+                    print: false,
+                    download: false,
+                    hozAlign: "center",
+                    headerHozAlign: "center"
+                },
+                {
+                    title: "Name",
+                    field: "profile.nama",
+                    minWidth: 200,
+                    responsive: 0,
+                    vertAlign: "middle",
+                    print: false,
+                    download: false,
+                    hozAlign: "center",
+                    headerHozAlign: "center"
+                },
                 // For print format
 
             ],
@@ -155,9 +180,15 @@ const onPrint = () => {
         tabulator.value.print();
     }
 };
+const branchList = ref([{
+    name: 'Pusat'
+}]);
+const changeBranch = (branch: string) => {
+
+}
 
 onMounted(() => {
-    // initTabulator();
+    initTabulator();
     reInitOnResizeWindow();
 });
 
@@ -165,7 +196,22 @@ onMounted(() => {
 
 <template>
     <div class="flex flex-col items-center mt-5 intro-y sm:flex-row">
-        <h2 class="mr-auto text-lg font-medium">Employee</h2>
+        <h2 class="mr-5 text-lg font-medium">Employee</h2>
+        <div class="w-full mr-auto mt-4 sm:w-auto sm:mt-0">
+            <Menu class="w-1/2 sm:w-auto ml-auto">
+                <Menu.Button :as="Button" variant="outline-secondary" class="w-full sm:w-auto">
+                    <Lucide icon="Building2" class="w-4 h-4 mr-2" /> Branch
+                    <Lucide icon="ChevronDown" class="w-4 h-4 ml-auto sm:ml-2" />
+                </Menu.Button>
+                <Menu.Items class="w-40">
+                    <div v-for="(branch, index) in branchList" :key="index">
+                        <Menu.Item @click="changeBranch(branch.name)">
+                            <Lucide icon="Building" class="w-4 h-4 mr-2" /> {{ branch.name }}
+                        </Menu.Item>
+                    </div>
+                </Menu.Items>
+            </Menu>
+        </div>
         <div class="flex w-full mt-4 sm:w-auto sm:mt-0">
             <Button variant="primary" class="mr-2 shadow-md">
                 Add New Employee
@@ -203,7 +249,6 @@ onMounted(() => {
                         class="w-full mt-2 2xl:w-full sm:mt-0 sm:w-auto">
                         <option value="name">Name</option>
                         <option value="category">Category</option>
-                        <option value="remaining_stock">Remaining Stock</option>
                     </FormSelect>
                 </div>
                 <div class="items-center mt-2 sm:flex sm:mr-4 xl:mt-0">
@@ -238,11 +283,11 @@ onMounted(() => {
                     </Button>
                 </div>
             </form>
-            <div class="flex mt-5 sm:mt-0">
+            <div class="flex flex-wrap mt-5 sm:mt-0">
                 <Button id="tabulator-print" variant="outline-secondary" class="w-1/2 mr-2 sm:w-auto" @click="onPrint">
                     <Lucide icon="Printer" class="w-4 h-4 mr-2" /> Print
                 </Button>
-                <Menu class="w-1/2 sm:w-auto">
+                <Menu class="w-1/2 sm:w-auto mr-2">
                     <Menu.Button :as="Button" variant="outline-secondary" class="w-full sm:w-auto">
                         <Lucide icon="FileText" class="w-4 h-4 mr-2" /> Export
                         <Lucide icon="ChevronDown" class="w-4 h-4 ml-auto sm:ml-2" />
@@ -262,6 +307,9 @@ onMounted(() => {
                         </Menu.Item>
                     </Menu.Items>
                 </Menu>
+                <Button id="tabulator-upload" variant="outline-secondary" class="w-1/2 mr-2 sm:w-auto" @click="onPrint">
+                    <Lucide icon="ArchiveRestore" class="w-4 h-4 mr-2" /> Upload
+                </Button>
             </div>
         </div>
         <div class="overflow-x-auto scrollbar-hidden">

@@ -8,12 +8,13 @@ export class API {
    * @description For Admin account Login
    * @param email
    * @param password
+   * @returns User Data
    */
   static async adminLogin(email: string, password: string): Promise<any> {
     localStorage.clear();
     return axios
       .post(
-        apiURL + "/custom_auth/login/",
+        apiURL + "/custom-auth/login/",
         {
           email: email,
           password: password,
@@ -46,10 +47,16 @@ export class API {
       });
   }
 
+  /**
+   * @name adminLogout
+   * @description For Admin Logout
+   * @param email
+   * @returns Success
+   */
   static async adminLogout(email: string): Promise<any> {
     return axios
       .post(
-        apiURL + "/custom_auth/logout/",
+        apiURL + "/custom-auth/logout/",
         {},
         {
           headers: {
@@ -63,6 +70,21 @@ export class API {
       })
       .catch((error: AxiosError) => {
         return "success";
+      });
+  }
+
+  static async getBranch(): Promise<any> {
+    return axios
+      .get(apiURL + "/tenant/get-branch-list", {
+        headers: {
+          Accept: "application/json",
+        },
+      })
+      .then((response) => {
+        return response;
+      })
+      .catch((error: AxiosError) => {
+        return 0;
       });
   }
 }
